@@ -406,3 +406,4 @@ function ProposalView({proposal:p,onCopy}){
     <ConsultorCard/><Disc/><ShareBox/>
   </div>);
 }
+ 
