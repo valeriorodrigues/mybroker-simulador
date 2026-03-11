@@ -216,7 +216,7 @@ function CreateView({data,step,onChange,onStep,onSave,onCancel}){
     <div style={{marginBottom:16}}><div className="pg-title">Nova Proposta</div><div className="pg-sub">Código: <strong style={{color:'var(--gold)'}}>{data.id}</strong></div></div>
     <div className="stpr">{STEPS.map((s,i)=>(<div key={i} style={{display:'flex',alignItems:'center'}}><div className={`st-dot ${i<step?'done':i===step?'active':'idle'}`}>{i<step?'✓':i+1}</div>{i<STEPS.length-1&&<div className={`st-line ${i<step?'done':''}`}/>}</div>))}</div>
     {step===0&&<StepCliente data={data} upd={upd}/>}
-    {step===1&&<StepProduto data={data} upd={upd}/>}
+    {step===1&&<StepProduto data={data} upd={upd} onChange={onChange}/>}
     {step===2&&<StepSimulacao data={data} onChange={onChange}/>}
     {step===3&&<StepFormato data={data} upd={upd}/>}
     <div style={{marginTop:18,display:'flex',flexDirection:'column',gap:7}}>
@@ -236,10 +236,16 @@ function StepCliente({data,upd}){return(<div>
   </div>
 </div>);}
 
-function StepProduto({data,upd}){return(<div>
+function StepProduto({data,upd,onChange}){
+  function selectTipo(k){
+    const d=JSON.parse(JSON.stringify(data));
+    d.produto.tipo=k;d.produto.subtipo='';
+    onChange(d);
+  }
+  return(<div>
   <div className="sec-title">Produto</div><div className="sec-sub">Ramo e finalidade do crédito</div>
-  <div className="g4" style={{marginBottom:12}}>{Object.entries(PRODUTOS).map(([k,v])=>(<div key={k} className={`card card-click${data.produto.tipo===k?' card-sel':''}`} style={{textAlign:'center',padding:'12px 6px'}} onClick={()=>{upd('produto.tipo',k);upd('produto.subtipo','');}}><div style={{fontSize:22,marginBottom:4}}>{v.icon}</div><div style={{fontSize:10,fontWeight:600,lineHeight:1.3}}>{v.label}</div></div>))}</div>
-  {data.produto.tipo&&(<div className="field"><label className="lbl">Finalidade</label><select className="sel" value={data.produto.subtipo} onChange={e=>upd('produto.subtipo',e.target.value)}><option value="">Selecione...</option>{PRODUTOS[data.produto.tipo].subtipos.map(s=><option key={s} value={s}>{s}</option>)}</select></div>)}
+  <div className="g4" style={{marginBottom:12}}>{Object.entries(PRODUTOS).map(([k,v])=>(<div key={k} className={`card card-click${data.produto.tipo===k?' card-sel':''}`} style={{textAlign:'center',padding:'12px 6px'}} onClick={()=>selectTipo(k)}><div style={{fontSize:22,marginBottom:4}}>{v.icon}</div><div style={{fontSize:10,fontWeight:600,lineHeight:1.3}}>{v.label}</div></div>))}</div>
+  {data.produto.tipo&&(<div className="field"><label className="lbl">Finalidade *</label><select className="sel" value={data.produto.subtipo} onChange={e=>upd('produto.subtipo',e.target.value)}><option value="">Selecione a finalidade...</option>{PRODUTOS[data.produto.tipo].subtipos.map(s=><option key={s} value={s}>{s}</option>)}</select></div>)}
 </div>);}
 
 function StepSimulacao({data,onChange}){
